@@ -1,4 +1,12 @@
-// Prisma client will be exported here when database is ready
-// For now, this is a placeholder for future database operations
+import { PrismaClient } from "./generated/prisma";
 
-export const db = null;
+// Prevent multiple instances of Prisma Client in development
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+export const db = globalForPrisma.prisma ?? new PrismaClient();
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = db;
+}
